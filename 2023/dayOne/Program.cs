@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿namespace y2023;
+
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Reflection;
@@ -33,7 +35,7 @@ class Pair{
         };
     }
 }
-class DayOne{
+public class DayOne(string filePath) : main.CalendarCode(filePath){
     private static List<Pair> pairs = [
         new Pair("1",1),
         new Pair("2",2),
@@ -46,37 +48,16 @@ class DayOne{
         new Pair("9",9)
     ];
     
-    static async Task Main(string[] args){
-        string[] list = File.ReadAllLines("input.txt");
-        Func<int> bob = () => MainProgram(list);
-        double[] time = await IterateWithTime(50000,bob);
+    public override
+     void Execute(){
+        string[] list = ReadAllLines();
+        Func<object> bob = () => MainProgram(list);
+        ArrayList time = IterateWithTime(1000,10,bob);
         Console.WriteLine("Average Time:");
-        Console.WriteLine(time.GetValue(1));
+        Console.WriteLine(time[1]);
         Console.WriteLine("Values:");
-        Console.WriteLine(time.GetValue(0));
+        Console.WriteLine(time[0]);
     }
-
-    public async static Task<double[]> IterateWithTime(int times, Func<int> function){
-        List<float> timeLog = [];
-        List<int> values = [];
-
-        await Task.Run(function);
-
-        Stopwatch sw = new();
-        sw.Start();
-
-        for(int y = 0; y < times; y++){
-            await Task.Run(function);
-        }
-
-        sw.Stop();
-
-        double timeElapsed = sw.Elapsed.TotalMilliseconds / times;
-
-        double[] arr = [function(), timeElapsed];
-        return arr;
-    }
-
 
     public static int MainProgram(String[] list){
         int counter = 0;

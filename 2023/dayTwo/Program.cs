@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿namespace y2023;
+
+using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
 class ColorCombinations{
@@ -10,46 +13,27 @@ class ColorCombinations{
         this.quantity = quantity;
     }
 }
-class AdventDayTwo{
-    static void Main(string[] args){
-        string[] list = File.ReadAllLines("input.txt");
+public class DayTwo(string filePath) : main.CalendarCode(filePath){
+    public override void Execute(){
+        string[] list = ReadAllLines();
 
-        Func<double> bob = () => MainProgram(list);
-        double[] time = IterateWithTime(10000, 100, bob);
+        Func<object> bob = () => MainProgram(list);
+        ArrayList time = IterateWithTime(10000, 100, bob);
 
         Console.WriteLine("Old Way:\n");
         Console.WriteLine("Average Time:");
-        Console.WriteLine(time.GetValue(1));
+        Console.WriteLine(time[1]);
         Console.WriteLine("Values:");
-        Console.WriteLine(time.GetValue(0));
+        Console.WriteLine(time[0]);
 
         bob = () => NewMainProgram(list);
         time = IterateWithTime(10000, 100, bob);
 
         Console.WriteLine("\nNew Way:\n");
         Console.WriteLine("Average Time:");
-        Console.WriteLine(time.GetValue(1));
+        Console.WriteLine(time[1]);
         Console.WriteLine("Values:");
-        Console.WriteLine(time.GetValue(0));
-    }
-    public static double[] IterateWithTime(int times, int warmups, Func<double> function){
-        for(int x = 0; x < warmups; x++){
-            function();
-        }
-
-        Stopwatch sw = new();
-        sw.Start();
-
-        for(int y = 0; y < times; y++){
-            function();
-        }
-
-        sw.Stop();
-
-        double timeElapsed = sw.Elapsed.TotalMilliseconds / times;
-
-        double[] arr = [function(), timeElapsed];
-        return arr;
+        Console.WriteLine(time[0]);
     }
     static int MainProgram(string[] list){
         int value = 0;
