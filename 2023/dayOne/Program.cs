@@ -52,7 +52,7 @@ public class DayOne(string filePath) : main.CalendarCode(filePath){
      void Execute(){
         string[] list = ReadAllLines();
         Func<object> bob = () => MainProgram(list);
-        ArrayList time = IterateWithTime(1000,10,bob);
+        ArrayList time = IterateWithTime(bob,1000,10);
         Console.WriteLine("Average Time:");
         Console.WriteLine(time[1]);
         Console.WriteLine("Values:");

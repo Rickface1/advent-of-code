@@ -9,7 +9,7 @@ public abstract class CalendarCode{
         this.filePath = "../../../" + DateTime.Now.ToString("yyyy") + "/" + filePath;
     }
     public abstract void Execute();
-    public static ArrayList IterateWithTime(int times, int warmups, Func<object> function){
+    public static ArrayList IterateWithTime(Func<object> function, int times, int warmups){
         for(int x = 0; x < warmups; x++){
             function();
         }
@@ -35,11 +35,10 @@ public abstract class CalendarCode{
     }
 
     public static ArrayList IterateOnce(Func<object> function){
-
         Stopwatch sw = new();
         sw.Start();
 
-        function();
+        var value = function();
 
         sw.Stop();
 
@@ -47,7 +46,7 @@ public abstract class CalendarCode{
 
         var arr = new ArrayList
         {
-            function(),
+            value,
             timeElapsed
         };
         

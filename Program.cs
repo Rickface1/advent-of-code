@@ -4,11 +4,14 @@ using System.Reflection;
 
 class MainRunner {
     public static void Main(){
+        ExecuteCode();
+        //PromptUser();
+    }
+    public static void PromptUser(){
         Console.WriteLine("--- please enter the class or leave empty for auto selection ---");
-        string data = Console.ReadLine();
-        Console.WriteLine("\n");
+        var data = Console.ReadLine();
 
-        if(data == null){
+        if(data == null || data.Length == 0){
             ExecuteCode();
         }else{
             ExecuteCode(data);
@@ -25,13 +28,13 @@ class MainRunner {
         string className = $"y{currentYear}.{fileName}";
 
         // Assuming the class and method exist
-        Type dynamicType = Type.GetType(className);
+        var dynamicType = Type.GetType(className);
 
         if (dynamicType != null) {
-            dynamic instance = Activator.CreateInstance(dynamicType,fileName);
+            var instance = Activator.CreateInstance(dynamicType,fileName);
 
             // Assuming there is a method with the constructed name
-            MethodInfo method = dynamicType.GetMethod("Execute");
+            var method = dynamicType.GetMethod("Execute");
 
             if (method != null) {
                 // Invoke the method
@@ -47,13 +50,13 @@ class MainRunner {
         string fileName = data.Split('.')[1];
 
         // Assuming the class and method exist
-        Type dynamicType = Type.GetType(data);
+        var dynamicType = Type.GetType(data);
 
         if (dynamicType != null) {
-            dynamic instance = Activator.CreateInstance(dynamicType,fileName);
+            var instance = Activator.CreateInstance(dynamicType,fileName);
 
             // Assuming there is a method with the constructed name
-            MethodInfo method = dynamicType.GetMethod("Execute");
+            var method = dynamicType.GetMethod("Execute");
 
             if (method != null) {
                 // Invoke the method

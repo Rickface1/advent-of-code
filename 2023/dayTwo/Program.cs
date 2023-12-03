@@ -18,7 +18,7 @@ public class DayTwo(string filePath) : main.CalendarCode(filePath){
         string[] list = ReadAllLines();
 
         Func<object> bob = () => MainProgram(list);
-        ArrayList time = IterateWithTime(10000, 100, bob);
+        ArrayList time = IterateWithTime(bob,10000, 100);
 
         Console.WriteLine("Old Way:\n");
         Console.WriteLine("Average Time:");
@@ -27,7 +27,7 @@ public class DayTwo(string filePath) : main.CalendarCode(filePath){
         Console.WriteLine(time[0]);
 
         bob = () => NewMainProgram(list);
-        time = IterateWithTime(10000, 100, bob);
+        time = IterateWithTime(bob,10000,100);
 
         Console.WriteLine("\nNew Way:\n");
         Console.WriteLine("Average Time:");
