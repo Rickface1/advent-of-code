@@ -21,7 +21,7 @@ public abstract class CalendarCode{
     /// returns void.
     /// </summary>
     public abstract void Execute();
-    public static ArrayList IterateWithTime<T>(Func<T> function, int times, int warmups){
+    public static Dictionary<string, object?> IterateWithTime<T>(Func<T> function, int times, int warmups){
         for(int x = 0; x < warmups; x++){
             function();
         }
@@ -38,13 +38,13 @@ public abstract class CalendarCode{
         double timeElapsed = sw.Elapsed.TotalMilliseconds / times;
         T output = function();
 
-        var arr = new ArrayList
+        Dictionary<string, object?> NewDictionary = new()
         {
-            output,
-            timeElapsed
+            ["time"] = timeElapsed,
+            ["data"] = output
         };
-        
-        return arr;
+
+        return NewDictionary;
     }
 
     public static ArrayList IterateOnce<T>(Func<T> function){
@@ -68,5 +68,12 @@ public abstract class CalendarCode{
 
     public string[] ReadAllLines(){
         return File.ReadAllLines(filePath + "/" + "input.txt");
+    }
+
+    public static void LeftShiftArray<T>(ref List<T> array, T DefaultValue){
+        for(int x = 0; x < array.Count - 1; x++){
+            array[x] = array[x + 1];
+        }
+        array[^1] = DefaultValue;
     }
 }

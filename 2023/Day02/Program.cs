@@ -17,23 +17,27 @@ public class DayTwo(string filePath) : main.CalendarCode(filePath){
     public override void Execute(){
         string[] list = ReadAllLines();
 
-        Func<object> bob = () => MainProgram(list);
-        ArrayList time = IterateWithTime(bob,10000, 100);
+        Func<int> bob = () => MainProgram(list);
+        var data = IterateWithTime<int>(bob,10000, 100);
 
         Console.WriteLine("Old Way:\n");
+
         Console.WriteLine("Average Time:");
-        Console.WriteLine(time[1]);
+        Console.WriteLine(data["time"]);
+
         Console.WriteLine("Values:");
-        Console.WriteLine(time[0]);
+        Console.WriteLine(data["data"]);
 
         bob = () => NewMainProgram(list);
-        time = IterateWithTime(bob,10000,100);
+        data = IterateWithTime<int>(bob,10000,100);
 
         Console.WriteLine("\nNew Way:\n");
+        
         Console.WriteLine("Average Time:");
-        Console.WriteLine(time[1]);
+        Console.WriteLine(data["time"]);
+
         Console.WriteLine("Values:");
-        Console.WriteLine(time[0]);
+        Console.WriteLine(data["data"]);
     }
     static int MainProgram(string[] list){
         int value = 0;

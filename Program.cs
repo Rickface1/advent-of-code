@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,8 @@ using System.Reflection.Metadata.Ecma335;
 class MainRunner
 {
     public static void Main(){
-        PromptUser();
+        ExecuteCode();
+        //PromptUser();
     }
 
     public static void PromptUser(){
@@ -22,7 +24,7 @@ class MainRunner
             ExecuteCode(data);
         }
     }
-    
+
     public static void GenerateNextDay(){
         // Get the current year and month in the Eastern Time (EST) zone
         DateTime currentDateTime = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
@@ -66,10 +68,8 @@ class MainRunner
         return $@"
 namespace {namespacePrefix};
 
-public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : main.CalendarCode(filePath)
-{{
-    public override void Execute()
-    {{
+public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : main.CalendarCode(filePath){{
+    public override void Execute(){{
         Console.WriteLine(""Day {NumberToWords(int.Parse(nextDayFolder))}"");
     }}
 }}
@@ -259,5 +259,4 @@ public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : mai
     private static int OtherWordsToNumber(string words){
         return RecursionWordsToNumber(words);
     }
-
 }

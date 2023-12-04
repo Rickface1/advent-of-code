@@ -11,15 +11,15 @@ public class DayThree(string filePath) : main.CalendarCode(filePath){
 
         var resultTuple = (ValueTuple<int, int>)(0,0);
 
-        if (returnVal != null && returnVal[0] is ValueTuple<int, int>){
-            resultTuple = (ValueTuple<int, int>)(returnVal[0] ?? (0,0));
+        if (returnVal != null && returnVal["data"] is ValueTuple<int, int>){
+            resultTuple = (ValueTuple<int, int>)(returnVal["data"] ?? (0,0));
         }
         int total = resultTuple.Item1;
         int aggregate = resultTuple.Item2;
 
         Console.WriteLine("---Old Way---");
 
-        Console.WriteLine($"Time: {(returnVal == null ? 0 : returnVal[1])}");
+        Console.WriteLine($"Time: {(returnVal == null ? 0 : returnVal["time"])}");
         Console.WriteLine($"Part One: {total}");
         Console.WriteLine($"Part Two: {aggregate}");
 
@@ -29,15 +29,15 @@ public class DayThree(string filePath) : main.CalendarCode(filePath){
 
         returnVal = IterateWithTime<(int total, int aggregate)>(program, 1000, 100);
 
-        if (returnVal != null && returnVal[0] is ValueTuple<int, int>){
-            resultTuple = (ValueTuple<int, int>)(returnVal[0] ?? (0,0));
+        if (returnVal != null && returnVal["data"] is ValueTuple<int, int>){
+            resultTuple = (ValueTuple<int, int>)(returnVal["data"] ?? (0,0));
         }
         total = resultTuple.Item1;
         aggregate = resultTuple.Item2;
 
         Console.WriteLine("---New Way---");
 
-        Console.WriteLine($"Time: {(returnVal == null ? 0 : returnVal[1])}");
+        Console.WriteLine($"Time: {(returnVal == null ? 0 : returnVal["time"])}");
         Console.WriteLine($"Part One: {total}");
         Console.WriteLine($"Part Two: {aggregate}");
     }

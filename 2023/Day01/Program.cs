@@ -48,15 +48,19 @@ public class DayOne(string filePath) : main.CalendarCode(filePath){
         new Pair("9",9)
     ];
     
-    public override
-     void Execute(){
+    public override void Execute(){
         string[] list = ReadAllLines();
-        Func<object> bob = () => MainProgram(list);
-        ArrayList time = IterateWithTime(bob,10000,100);
+        Func<int> bob = () => {
+            return MainProgram(list);
+        };
+
+        var data = IterateWithTime<int>(bob,10000,100);
+
         Console.WriteLine("Average Time:");
-        Console.WriteLine(time[1]);
+        Console.WriteLine(data["time"]);
+
         Console.WriteLine("Values:");
-        Console.WriteLine(time[0]);
+        Console.WriteLine(data["data"]);
     }
 
     public static int MainProgram(String[] list){
