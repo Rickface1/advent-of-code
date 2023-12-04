@@ -7,7 +7,7 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
         Func<(int,int)> ParseFunction = () => {
             return StartParse(args);
         };
-        var result = IterateWithTime<(int,int)>(ParseFunction, 1000,50);
+        var result = IterateWithTime<(int,int)>(ParseFunction, 50000,500);
 
         var ParseResult = (ValueTuple<int, int>)(result["data"] ?? (0,0));
 
@@ -37,7 +37,7 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
             PartTwoTotal += CurrentNumberOfCards = NextCards[0];
             LeftShiftArray<int>(NextCards, 1);
 
-            char[] CurrentLine = lines[line][(lines[line].IndexOf(':') + 2)..].ToCharArray();
+            ReadOnlySpan<char> CurrentLine = lines[line][(lines[line].IndexOf(':') + 2)..].ToCharArray().AsSpan();
 
             List<int> CurrentTickets = [];
             List<int> CurrentWinners = [];
@@ -45,17 +45,20 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
             for(int character = 0; character < CurrentLine.Length; character++){
                 char CurrentChar = CurrentLine[character];
                 if(char.IsNumber(CurrentChar)){
-                    int endIndex = Array.IndexOf(CurrentLine[character..], ' ');
+                    int endIndex = CurrentLine[character..].IndexOf(' ');
+
                     endIndex = endIndex == -1 ? CurrentLine.Length : endIndex + character;
                     
                     if(character < 30){
-                        CurrentTickets.Add(int.Parse(CurrentLine.AsSpan()[character..endIndex]));
+                        CurrentTickets.Add(int.Parse(CurrentLine[character..endIndex]));
                     }else{
-                        CurrentWinners.Add(int.Parse(CurrentLine.AsSpan()[character..endIndex]));
+                        CurrentWinners.Add(int.Parse(CurrentLine[character..endIndex]));
                     }
                     character = endIndex;
                 }
             }
+
+            
 
             int Intersections = Enumerable.Intersect(CurrentTickets, CurrentWinners).Count();
 
