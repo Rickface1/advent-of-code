@@ -35,10 +35,9 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
 
         for(int line = 0; line < lines.Length; line++){
             PartTwoTotal += CurrentNumberOfCards = NextCards[0];
-            LeftShiftArray<int>(ref NextCards, 1);
+            LeftShiftArray<int>(NextCards, 1);
 
             char[] CurrentLine = lines[line][(lines[line].IndexOf(':') + 2)..].ToCharArray();
-            int BarIndex = Array.IndexOf(CurrentLine,'|');
 
             List<int> CurrentTickets = [];
             List<int> CurrentWinners = [];
@@ -48,7 +47,8 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
                 if(char.IsNumber(CurrentChar)){
                     int endIndex = Array.IndexOf(CurrentLine[character..], ' ');
                     endIndex = endIndex == -1 ? CurrentLine.Length : endIndex + character;
-                    if(character < BarIndex){
+                    
+                    if(character < 30){
                         CurrentTickets.Add(int.Parse(CurrentLine.AsSpan()[character..endIndex]));
                     }else{
                         CurrentWinners.Add(int.Parse(CurrentLine.AsSpan()[character..endIndex]));
@@ -60,11 +60,9 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
             int Intersections = Enumerable.Intersect(CurrentTickets, CurrentWinners).Count();
 
             if(Intersections > 0)
-                PartOneTotal += (int)Math.Pow(2, (Intersections - 1));
-            for(int i = 0; i < Intersections; i++){
+                PartOneTotal += (int)Math.Pow(2, Intersections - 1);
+            for(int i = 0; i < Intersections; i++)
                 NextCards[i] += CurrentNumberOfCards;
-            }
-            
         }
 
         return (PartOneTotal, PartTwoTotal);

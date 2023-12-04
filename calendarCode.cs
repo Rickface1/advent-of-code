@@ -70,10 +70,10 @@ public abstract class CalendarCode{
         return File.ReadAllLines(filePath + "/" + "input.txt");
     }
 
-    public static void LeftShiftArray<T>(ref List<T> array, T DefaultValue){
-        for(int x = 0; x < array.Count - 1; x++){
-            array[x] = array[x + 1];
+    public static void LeftShiftArray<T>(List<T> array, T DefaultValue){
+        if (array.Count > 0){
+            array.RemoveAt(0); // Remove the first element
+            array.Add(DefaultValue); // Add the default value at the end
         }
-        array[^1] = DefaultValue;
     }
 }
