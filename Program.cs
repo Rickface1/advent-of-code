@@ -7,20 +7,73 @@ using System.Reflection.Metadata.Ecma335;
 class MainRunner
 {
     public static void Main(){
-        //PromptUser();
-        ExecuteCode();
+        PromptUser();
     }
 
     public static void PromptUser(){
         Console.WriteLine("--- please enter the class or leave empty for auto selection ---");
         var data = Console.ReadLine();
 
-        if (string.IsNullOrEmpty(data))
-        {
+        if (string.IsNullOrEmpty(data)){
             ExecuteCode();
+        }else if(data == "gen next day"){
+            GenerateNextDay();
         }else{
             ExecuteCode(data);
         }
+    }
+    
+    public static void GenerateNextDay(){
+        // Get the current year and month in the Eastern Time (EST) zone
+        DateTime currentDateTime = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
+        int currentYear = int.Parse(currentDateTime.ToString("yyyy"));
+
+        string namespacePrefix = $"y{currentYear}.Day";
+
+        // Find all classes in the current year's namespace
+        List<Type> classesInNamespace = GetClassesInNamespace(namespacePrefix);
+
+        // Find the class with the highest day
+        var mostRecentClass = GetMostRecentClass(classesInNamespace);
+
+        // Determine the next day
+        string nextDay = (mostRecentClass?.Name != null)
+            ? new Func<string>(() => {
+                int number = OtherWordsToNumber(mostRecentClass.Name.Substring(mostRecentClass.Name.LastIndexOf("Day") + 3)) + 1;
+                return number > 0 && number < 10 ? '0' + number.ToString() : number.ToString();
+            })()
+            : "00";
+
+
+        // Construct the next day's folder name
+        string nextDayFolder = $"Day{nextDay}";
+
+        // Create the folder for the next day
+        string folderPath = Path.Combine(Directory.GetCurrentDirectory() + "../../../../" + currentYear + "/", nextDayFolder);
+        Directory.CreateDirectory(folderPath);
+
+        // Generate Program.cs
+        string programCode = GenerateProgramCode(namespacePrefix.Substring(0,5), nextDayFolder.Substring(3));
+        File.WriteAllText(Path.Combine(folderPath, "Program.cs"), programCode);
+
+        // Generate empty input.txt
+        File.WriteAllText(Path.Combine(folderPath, "input.txt"), string.Empty);
+
+        Console.WriteLine($"Next day folder created: {nextDayFolder}");
+    }
+
+    private static string GenerateProgramCode(string namespacePrefix, string nextDayFolder){
+        return $@"
+namespace {namespacePrefix};
+
+public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : main.CalendarCode(filePath)
+{{
+    public override void Execute()
+    {{
+        Console.WriteLine(""Day {NumberToWords(int.Parse(nextDayFolder))}"");
+    }}
+}}
+        ";
     }
 
     public static void ExecuteCode(){
@@ -97,16 +150,16 @@ class MainRunner
     private static Type? GetMostRecentClass(List<Type> classes){
         // Find the class with the highest day
         Type? mostRecentClass = null;
-        int highestDay = -1;
+        string highestDay = "-1";
 
         foreach (Type type in classes){
             string typeName = type != null ? type.FullName ?? "" : "";
 
             // Extract day from the class name
-            int day = WordsToNumber(typeName.Substring(typeName.LastIndexOf("Day") + 3));
+            string day = WordsToNumber(typeName.Substring(typeName.LastIndexOf("Day") + 3));
 
-            if (day != -1){
-                if (day > highestDay){
+            if (day != "-1"){
+                if (int.Parse(day) > int.Parse(highestDay)){
                     highestDay = day;
                     mostRecentClass = type;
                 }
@@ -117,7 +170,9 @@ class MainRunner
     }
 
     private static void ExecuteMethod(Type dynamicType, string className){
-        var instance = Activator.CreateInstance(dynamicType, className.Substring(6));
+        className = className.Substring(9);
+
+        var instance = Activator.CreateInstance(dynamicType, "Day" + WordsToNumber(className));
 
         // Assuming there is a method with the constructed name
         var method = dynamicType.GetMethod("Execute");
@@ -155,7 +210,7 @@ class MainRunner
         return $"{NumberToWords(number / 1000)} Thousand {NumberToWords(number % 1000)}";
     }
 
-    private static int WordsToNumber(string words){
+    private static int RecursionWordsToNumber(string words){
         // Split the input string into words
         string[] wordArray = words.Split(' ');
 
@@ -194,6 +249,15 @@ class MainRunner
         result += currentNumber;
 
         return result;
+    }
+
+    private static string WordsToNumber(string words){
+        int ReturnVal = RecursionWordsToNumber(words);
+        return ReturnVal < 10 && ReturnVal  > 0 ? '0' + ReturnVal.ToString() : ReturnVal.ToString();
+    }
+
+    private static int OtherWordsToNumber(string words){
+        return RecursionWordsToNumber(words);
     }
 
 }
