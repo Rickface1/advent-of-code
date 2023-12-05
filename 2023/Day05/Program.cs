@@ -7,13 +7,15 @@ public class DayFive(string filePath) : main.CalendarCode(filePath){
     }
 
     public static long Parse(Span<string> input){
+
+        //Split First Line into Seeds
         ReadOnlySpan<long> InitialSeeds = input[0][7..].Split(' ').Select(seed => long.Parse(seed)).ToArray().AsSpan();
         List<Range> Seeds = [];
         for(int a = 0; a < InitialSeeds.Length; a+= 2){
             Seeds.Add(new Range(InitialSeeds[a], InitialSeeds[a + 1]));
         }
 
-        //List<long> Seeds = input[0][7..].Split(' ').Select(code => long.Parse(code)).ToList();
+        //Indexes of all sections
         List<int> indexes = [
             input.IndexOf("seed-to-soil map:"),
             input.IndexOf("soil-to-fertilizer map:"),
@@ -25,40 +27,56 @@ public class DayFive(string filePath) : main.CalendarCode(filePath){
             input.Length
         ];
 
+        //loop through all indexes
         for(int index = 0; index < indexes.Count - 1; index++){
+
+            //Get all strings from start of section to start of next
             int TempIndexHolder = indexes[index + 1];
             ReadOnlySpan<string> strings = input[indexes[index]..TempIndexHolder];
 
-            List<Ranges> RangeList = [];
+            List<Map> MapList = [];
 
+            //Split each line into map
             for(int line = 1; line < (indexes[index + 1] - indexes[index] - 1); line++){
                 ReadOnlySpan<long> CurrentLine = strings[line].Split(' ').Select(long.Parse).ToArray().AsSpan();
 
-                RangeList.Add(new Ranges(new Range(CurrentLine[1], CurrentLine[2]), new Range(CurrentLine[0], CurrentLine[2])));
+                MapList.Add(new Map(new Range(CurrentLine[1], CurrentLine[2]), new Range(CurrentLine[0], CurrentLine[2])));
             }
 
             List<Range> TempSeedList = [];
 
+            //Iterate for all of the ranges of the seeds
             for(int y = 0; y < Seeds.Count; y++){
-                List<Range> TempNewSeedList = RangeList.Select(ranges => ranges.Split(Seeds[y])).ToList();
+                //Get all of the ranges required for each seed
+                List<Range> TempNewSeedList = MapList.Select(map => map.Split(Seeds[y])).ToList();
 
+                TempNewSeedList.AddRange(MapList.SelectMany(map => map.NotIncluded(TempNewSeedList)));
+
+                //determine if seed is in any ranges
                 if(!TempNewSeedList.Where(range => !range.Equals(new Range(-1, -1))).Any()){
+                    //if not, simply copy seed
                     TempSeedList.Add(Seeds[y]);
                 }else{
+                    //if there is, add all of the ranges
                     TempSeedList.AddRange(TempNewSeedList);
                 }
             }
 
+            //Set Seeds for next iteration
             Seeds = TempSeedList;
         }
 
+        //return the lowest seed
         return Seeds.Where(range => !range.Equals(new Range(-1, -1))).Select(range => range.StartingValue).Min();
     }
 }
 
 public class Range(long StartingValue, long Displacement){
+    //start value of range
     public long StartingValue = StartingValue;
+    //end value of range
     public long EndingValue = StartingValue + Displacement;
+    //number of values in the range
     public long Displacement = Displacement;
 
     public override string ToString(){
@@ -76,17 +94,10 @@ public class Range(long StartingValue, long Displacement){
     public override int GetHashCode(){
         return HashCode.Combine(StartingValue, Displacement);
     }
-
-    public bool Touching(Range range){
-        return (StartingValue >= range.StartingValue && StartingValue <= range.StartingValue + range.Displacement) ||
-            (EndingValue >= range.StartingValue && EndingValue <= range.StartingValue + range.Displacement) ||
-            (range.StartingValue >= StartingValue && range.StartingValue <= StartingValue + Displacement) ||
-            (range.StartingValue + range.Displacement >= StartingValue && range.StartingValue + range.Displacement <= StartingValue + Displacement);
-    }
 }
 
-public class Ranges(Range RootRange, Range DestinationRange)
-{
+public class Map(Range RootRange, Range DestinationRange){
+    //Range to translate from
     public Range RootRange = RootRange;
     public Range DestinationRange = DestinationRange;
 
@@ -107,23 +118,36 @@ public class Ranges(Range RootRange, Range DestinationRange)
     }
 
     public Range Split(Range range){
-        /*if (RootRange.Touching(range)){
-            return new Range(Math.Max(RootRange.StartingValue, range.StartingValue), Math.Min(range.EndingValue,RootRange.EndingValue));
-        }*/
-
         long intersectionStart = Math.Max(RootRange.StartingValue, range.StartingValue);
         long intersectionEnd = Math.Min(RootRange.EndingValue, range.EndingValue);
         long intersectionDisplacement = Math.Min(RootRange.Displacement, range.Displacement);
 
-        if (intersectionStart <= intersectionEnd){
+        if (intersectionStart < intersectionEnd){
             return new Range(Value(intersectionStart), intersectionEnd - intersectionStart);
-            //return new Range(Value(intersectionStart), intersectionEnd - intersectionStart);
         }
 
         return new Range(-1, -1);
     }
 
+    public List<Range> NotIncluded(List<Range> ranges){
+        List<Range> ReturnList = [];
+
+        foreach(Range range in ranges){
+            long intersectionStart = Math.Max(RootRange.StartingValue, range.StartingValue);
+            long intersectionEnd = Math.Min(RootRange.EndingValue, range.EndingValue);
+
+            if (!(intersectionStart < intersectionEnd)){
+                if(RootRange.StartingValue < range.StartingValue)
+                    ReturnList.Add(new Range(RootRange.StartingValue, range.StartingValue - RootRange.StartingValue));
+                if(RootRange.EndingValue < range.EndingValue)
+                    ReturnList.Add(new Range(RootRange.EndingValue, range.EndingValue - RootRange.EndingValue));
+            }
+        }
+
+        return ReturnList;
+    }
+
     public override string ToString(){
-        return $"[y2023.Ranges]\n    [Root Range: {RootRange}]\n    [Destination Range: {DestinationRange}]";
+        return $"[y2023.Map]\n    [Root Range: {RootRange}]\n    [Destination Range: {DestinationRange}]";
     }
 }
