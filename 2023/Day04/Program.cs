@@ -44,20 +44,14 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
             List<int> CurrentTickets = [];
             List<int> CurrentWinners = [];
 
-            for(int character = 0; character < CurrentLine.Length; character++){
-                char CurrentChar = CurrentLine[character];
-                if(char.IsNumber(CurrentChar)){
-                    int endIndex = CurrentLine[character..].IndexOf(' ');
+            for(int character = 0; character < 30; character++){
+                CurrentTickets.Add(int.Parse(CurrentLine[character..(2 + character)]));
+                character += 2;
+            }
 
-                    endIndex = endIndex == -1 ? CurrentLine.Length : endIndex + character;
-                    
-                    if(character < 30){
-                        CurrentTickets.Add(int.Parse(CurrentLine[character..endIndex]));
-                    }else{
-                        CurrentWinners.Add(int.Parse(CurrentLine[character..endIndex]));
-                    }
-                    character = endIndex;
-                }
+            for(int character = 32; character < 106; character++){
+                CurrentWinners.Add(int.Parse(CurrentLine[character..(2 + character)]));
+                character += 2;
             }
 
             
