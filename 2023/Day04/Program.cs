@@ -5,7 +5,7 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
     public override void Execute(){
         string[] args = ReadAllLines();
         Func<(int,int)> ParseFunction = () => {
-            return StartParse(args);
+            return StartParse(args.AsSpan());
         };
         var result = IterateWithTime<(int,int)>(ParseFunction, 50000,500);
 
@@ -24,7 +24,7 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
         Console.WriteLine("--- PART 2 OUTPUT---");
         Console.WriteLine(ParseResult.Item2);
     }
-    public static (int, int) StartParse(string[] lines){
+    public static (int, int) StartParse(ReadOnlySpan<string> lines){
         int PartOneTotal = 0;
         int PartTwoTotal = 0;
 
@@ -37,7 +37,9 @@ public class DayFour(string filePath) : main.CalendarCode(filePath){
             PartTwoTotal += CurrentNumberOfCards = NextCards[0];
             LeftShiftArray<int>(NextCards, 1);
 
-            ReadOnlySpan<char> CurrentLine = lines[line][(lines[line].IndexOf(':') + 2)..].ToCharArray().AsSpan();
+            ReadOnlySpan<char> DumpLine = lines[line].ToCharArray().AsSpan();
+
+            ReadOnlySpan<char> CurrentLine = DumpLine[10..];
 
             List<int> CurrentTickets = [];
             List<int> CurrentWinners = [];
