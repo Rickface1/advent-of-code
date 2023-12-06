@@ -8,6 +8,7 @@ using System.Reflection.Metadata.Ecma335;
 class MainRunner
 {
     public static void Main(){
+        //GenerateNextDay();
         ExecuteCode();
         //PromptUser();
     }
