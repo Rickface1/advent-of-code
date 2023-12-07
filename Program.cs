@@ -2,28 +2,90 @@
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
+using main;
+
 
 class MainRunner
 {
     public static void Main(){
-        //GenerateNextDay();
-        ExecuteCode();
-        //PromptUser();
+        PromptUser();
     }
 
     public static void PromptUser(){
-        Console.WriteLine("--- please enter the class or leave empty for auto selection ---");
-        var data = Console.ReadLine();
+        var LastInput = "";
 
-        if (string.IsNullOrEmpty(data)){
-            ExecuteCode();
-        }else if(data == "gen next day"){
-            GenerateNextDay();
-        }else{
-            ExecuteCode(data);
+        while(LastInput != "exit"){
+            Console.WriteLine("--- Insert Command ---");
+            string Temp = Console.ReadLine() ?? LastInput;
+            if(Temp == "")
+                Temp = LastInput;
+            LastInput = Temp;
+            List<string> input = LastInput.Split(' ').ToList();
+
+            Console.WriteLine();
+
+            if(LastInput == "gen next day"){
+                GenerateNextDay();
+            }else if(input.Count > 0 && input[0] == "run"){
+                if(input.Count > 1){
+                    if(input[1] == "sample")
+                        if(input.Count < 3 || input[2] == "" || input[2] == null)
+                            ExecuteSampleCode();
+                        else
+                            ExecuteSampleCode(LastInput);
+                    else if(input[1] == "input")
+                        ExecuteCode();
+                    else if(input[1].StartsWith('y'))
+                        ExecuteCode(input[1]);
+                }
+            }
+
+            Console.WriteLine();
         }
+    }
+
+    public static Task<string> GetInput(string year, string CurrentDay){
+        string url = $"https://adventofcode.com/{year}/day/{CurrentDay}/input";
+        string cookie = "53616c7465645f5f5021ed0d30c7fe2fd9f5767504093b7960141e7b3b8b4b7a93cf2df6c8274e697cafc0f764aa65679cee39abfb3214ea9667c964321a2ed9";
+
+        Console.WriteLine(url);
+
+        using var handler = new HttpClientHandler{
+            CookieContainer = new CookieContainer(),
+            UseCookies = true
+        };
+
+        handler.CookieContainer.Add(new Uri("https://adventofcode.com/"), new Cookie("session", cookie));
+        
+        using HttpClient client = new(handler);
+
+        client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
+
+        try{
+            // Send a GET request to the URL
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            // Check if the request was successful
+            if (response.IsSuccessStatusCode){
+                // Read the content as a string
+                string content = response.Content.ReadAsStringAsync().Result;
+                Console.WriteLine(content);
+
+                Console.WriteLine("Finished Printing Content");
+                
+                // Output the content
+                return Task.FromResult(content);
+            }else{
+                Console.WriteLine($"Failed to retrieve content. Status code: {response.StatusCode}");
+            }
+        }catch (Exception ex){
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+
+        return Task.FromResult("");
     }
 
     public static void GenerateNextDay(){
@@ -59,8 +121,17 @@ class MainRunner
         string programCode = GenerateProgramCode(namespacePrefix.Substring(0,5), nextDayFolder.Substring(3));
         File.WriteAllText(Path.Combine(folderPath, "Program.cs"), programCode);
 
-        // Generate empty input.txt
-        File.WriteAllText(Path.Combine(folderPath, "input.txt"), string.Empty);
+        // Generate input.txt
+        Task<string> getInputTask = GetInput(currentYear.ToString(), int.Parse(nextDay).ToString());
+        string ReturnValue = getInputTask.Result; // Use .Result to await synchronously
+        
+        Console.WriteLine(ReturnValue);
+        Console.WriteLine("Finished Printing Return");
+        File.WriteAllText(Path.Combine(folderPath, "input.txt"), ReturnValue);
+
+        //Generate empty sample.txt
+        File.WriteAllText(Path.Combine(folderPath, "sample.txt"), null);
+
 
         Console.WriteLine($"Next day folder created: {nextDayFolder}");
     }
@@ -70,8 +141,8 @@ class MainRunner
 namespace {namespacePrefix};
 
 public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : main.CalendarCode(filePath){{
-    public override void Execute(){{
-        Console.WriteLine(""Day {NumberToWords(int.Parse(nextDayFolder))}"");
+    public override void Execute(string[] args){{
+        args.ToList().ForEach(data => Console.WriteLine(data));
     }}
 }}
         ";
@@ -99,7 +170,7 @@ public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : mai
                 var dynamicType = Type.GetType(className);
 
                 if (dynamicType != null){
-                    ExecuteMethod(dynamicType, className);
+                    ExecuteMethod(dynamicType, className, "input");
                 }else{
                     Console.WriteLine($"Class {className} not found.");
                 }
@@ -111,12 +182,68 @@ public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : mai
         }
     }
 
+    public static void ExecuteSampleCode(){
+        // Get the current year and month in the Eastern Time (EST) zone
+        DateTime currentDateTime = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
+        int currentYear = int.Parse(currentDateTime.ToString("yyyy"));
+
+        string namespacePrefix = $"y{currentYear}.Day";
+
+        // Find all classes in the current year's namespace
+        List<Type> classesInNamespace = GetClassesInNamespace(namespacePrefix);
+
+        if (classesInNamespace.Count > 0){
+            // Find the class with the highest day
+            var mostRecentClass = GetMostRecentClass(classesInNamespace);
+
+            if (mostRecentClass != null){
+                // Construct the full class name
+                string className = mostRecentClass == null ? "" : mostRecentClass.FullName ?? "";
+
+                // Assuming the class and method exist
+                var dynamicType = Type.GetType(className);
+
+                if (dynamicType != null){
+                    ExecuteMethod(dynamicType, className, "sample");
+                }else{
+                    Console.WriteLine($"Class {className} not found.");
+                }
+            }else{
+                Console.WriteLine("No classes found in the current year's namespace.");
+            }
+        }else{
+            Console.WriteLine($"No classes found for the current year ({currentYear}).");
+        }
+    }
+
+    public static void ExecuteSampleCode(string data){
+        // Assuming the class and method exist
+        var dynamicType = Type.GetType(data);
+
+        if (dynamicType != null){
+            ExecuteMethod(dynamicType, data, "sample");
+        }else{
+            Console.WriteLine($"Class {data} not found.");
+        }
+    }
+
     public static void ExecuteCode(string data){
         // Assuming the class and method exist
         var dynamicType = Type.GetType(data);
 
         if (dynamicType != null){
-            ExecuteMethod(dynamicType, data);
+            ExecuteMethod(dynamicType, data, "input");
+        }else{
+            Console.WriteLine($"Class {data} not found.");
+        }
+    }
+
+    public static void ExecuteCode(string data, string input){
+        // Assuming the class and method exist
+        var dynamicType = Type.GetType(data);
+
+        if (dynamicType != null){
+            ExecuteMethod(dynamicType, data, input);
         }else{
             Console.WriteLine($"Class {data} not found.");
         }
@@ -170,7 +297,7 @@ public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : mai
         return mostRecentClass;
     }
 
-    private static void ExecuteMethod(Type dynamicType, string className){
+    private static void ExecuteMethod(Type dynamicType, string className, string input){
         className = className.Substring(9);
 
         var instance = Activator.CreateInstance(dynamicType, "Day" + WordsToNumber(className));
@@ -180,7 +307,11 @@ public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : mai
 
         if (method != null){
             // Invoke the method
-            method.Invoke(instance, null);
+            var CalendarObject = (CalendarCode?)instance ?? null;
+            if(CalendarObject != null){
+                string[] args = $"{input}.txt" == "sample.txt" ? CalendarObject.ReadAllSampleLines() : CalendarObject.ReadAllLines();
+                method.Invoke(instance, [args]);
+            }
         }
         else{
             Console.WriteLine($"Method not found in class {className}.");

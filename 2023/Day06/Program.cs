@@ -2,13 +2,13 @@
 namespace y2023;
 
 public class DaySix(string filePath) : main.CalendarCode(filePath){
-    public override void Execute(){
-        List<string> args = ReadAllLines().Select(str => str[12..]).ToList();
+    public override void Execute(string[] args){
+        List<string> input = args.Select(str => str[11..]).ToList();
         Func<(int, long)> ParseFunction = () => {
-            return BothParts(args);
+            return BothParts(input);
         };
 
-        var Result = IterateWithTime(ParseFunction, 1000000, 1000);
+        var Result = IterateWithTime(ParseFunction, 10000000, 1000);
 
         var Data = (ValueTuple<int, long>)(Result["data"] ?? (0,0L));
 
@@ -24,7 +24,7 @@ public class DaySix(string filePath) : main.CalendarCode(filePath){
         Console.WriteLine();
 
         Func<long> PartOne = () => {
-            return FirstPart(args);
+            return FirstPart(input);
         };
 
         var FirstPartResult = IterateWithTime(PartOne, 1000000, 1000);
@@ -35,18 +35,20 @@ public class DaySix(string filePath) : main.CalendarCode(filePath){
         Console.WriteLine();
 
         Func<long> PartTwo = () => {
-            return SecondPart(args);
+            return SecondPart(input);
         };
 
         var SecondPartResult = IterateWithTime(PartTwo, 1000000, 1000);
 
         Console.WriteLine("--- PART TWO TIME ---");
         Console.WriteLine(SecondPartResult["time"]);
+
+        Console.WriteLine();
     }
 
     public static (int, long) BothParts(List<string> args){
-        ReadOnlySpan<int> Time = args[0].Split("   ").Select(int.Parse).ToArray().AsSpan();
-        ReadOnlySpan<int> Distance = args[1].Split("   ").Select(int.Parse).ToArray().AsSpan();
+        ReadOnlySpan<int> Time = args[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray().AsSpan();
+        ReadOnlySpan<int> Distance = args[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray().AsSpan();
 
         int total = 1;
 
@@ -62,8 +64,8 @@ public class DaySix(string filePath) : main.CalendarCode(filePath){
     }
 
     public static long FirstPart(List<string> args){        
-        ReadOnlySpan<int> Time = args[0].Split("   ").Select(int.Parse).ToArray().AsSpan();
-        ReadOnlySpan<int> Distance = args[1].Split("   ").Select(int.Parse).ToArray().AsSpan();
+        ReadOnlySpan<int> Time = args[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray().AsSpan();
+        ReadOnlySpan<int> Distance = args[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray().AsSpan();
 
         long total = 1;
 

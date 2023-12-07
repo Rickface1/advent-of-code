@@ -14,10 +14,8 @@ class ColorCombinations{
     }
 }
 public class DayTwo(string filePath) : main.CalendarCode(filePath){
-    public override void Execute(){
-        string[] list = ReadAllLines();
-
-        Func<int> bob = () => MainProgram(list);
+    public override void Execute(string[] args){
+        Func<int> bob = () => MainProgram(args);
         var data = IterateWithTime<int>(bob,10000, 100);
 
         Console.WriteLine("Old Way:\n");
@@ -28,7 +26,7 @@ public class DayTwo(string filePath) : main.CalendarCode(filePath){
         Console.WriteLine("Values:");
         Console.WriteLine(data["data"]);
 
-        bob = () => NewMainProgram(list);
+        bob = () => NewMainProgram(args);
         data = IterateWithTime<int>(bob,10000,100);
 
         Console.WriteLine("\nNew Way:\n");

@@ -2,8 +2,8 @@
 namespace y2023;
 
 public class DayFive(string filePath) : main.CalendarCode(filePath){
-    public override void Execute(){
-        Console.WriteLine(Parse(ReadAllLines().AsSpan()));
+    public override void Execute(string[] args){
+        Console.WriteLine(Parse(args.AsSpan()));
     }
 
     public static long Parse(Span<string> input){

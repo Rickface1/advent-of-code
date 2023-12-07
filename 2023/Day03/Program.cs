@@ -1,10 +1,9 @@
 namespace y2023;
 
 public class DayThree(string filePath) : main.CalendarCode(filePath){
-    public override void Execute(){
-        string[] lines = ReadAllLines();
+    public override void Execute(string[] args){
         Func<(int total,int aggregate)> program = () => {
-            return StartProgram(lines);
+            return StartProgram(args);
         };
 
         var returnVal = IterateWithTime<(int total, int aggregate)>(program, 10, 1);
@@ -24,7 +23,7 @@ public class DayThree(string filePath) : main.CalendarCode(filePath){
         Console.WriteLine($"Part Two: {aggregate}");
 
         program = () => {
-            return NewMain(lines);
+            return NewMain(args);
         };
 
         returnVal = IterateWithTime<(int total, int aggregate)>(program, 1000, 100);

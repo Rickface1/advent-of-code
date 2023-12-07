@@ -20,7 +20,7 @@ public abstract class CalendarCode{
     /// Method that is ran when the main program is compiled.
     /// returns void.
     /// </summary>
-    public abstract void Execute();
+    public abstract void Execute(string[] args);
     public static Dictionary<string, object?> IterateWithTime<T>(Func<T> function, int times, int warmups){
         for(int x = 0; x < warmups; x++){
             function();
@@ -38,8 +38,7 @@ public abstract class CalendarCode{
         double timeElapsed = sw.Elapsed.TotalMilliseconds / times;
         T output = function();
 
-        Dictionary<string, object?> NewDictionary = new()
-        {
+        Dictionary<string, object?> NewDictionary = new(){
             ["time"] = timeElapsed,
             ["data"] = output
         };
@@ -68,6 +67,21 @@ public abstract class CalendarCode{
 
     public string[] ReadAllLines(){
         return File.ReadAllLines(filePath + "/" + "input.txt");
+    }
+
+    public string[] ReadAllSampleLines(){
+        return File.ReadAllLines(filePath + "/" + "sample.txt");
+    }
+
+    public string[] ReadAllLines(string FilePath){
+        return File.ReadAllLines(filePath + "/" + FilePath);
+    }
+
+    public void WriteLines(string FilePath, string input){
+        string path = filePath + "/" + FilePath;
+        string contentToWrite = input + Environment.NewLine;
+
+        File.AppendAllText(path, contentToWrite);
     }
 
     public static void LeftShiftArray<T>(List<T> array, T DefaultValue){

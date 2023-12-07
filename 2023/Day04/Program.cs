@@ -2,8 +2,7 @@
 namespace y2023;
 
 public class DayFour(string filePath) : main.CalendarCode(filePath){
-    public override void Execute(){
-        string[] args = ReadAllLines();
+    public override void Execute(string[] args){
         Func<(int,int)> ParseFunction = () => {
             return StartParse(args.AsSpan());
         };

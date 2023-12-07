@@ -48,10 +48,9 @@ public class DayOne(string filePath) : main.CalendarCode(filePath){
         new Pair("9",9)
     ];
     
-    public override void Execute(){
-        string[] list = ReadAllLines();
+    public override void Execute(string[] args){
         Func<int> bob = () => {
-            return MainProgram(list);
+            return MainProgram(args);
         };
 
         var data = IterateWithTime<int>(bob,10000,100);

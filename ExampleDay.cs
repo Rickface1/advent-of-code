@@ -9,7 +9,7 @@ namespace y2023;
 /// </summary>
 /// <param name="filePath"></param>
 public class DayNumber(string filePath) : main.CalendarCode(filePath){
-    public override void Execute(){
+    public override void Execute(string[] args){
         Console.WriteLine("Example Thing");
     }
 }
