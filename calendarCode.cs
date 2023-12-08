@@ -46,7 +46,7 @@ public abstract class CalendarCode{
         return NewDictionary;
     }
 
-    public static ArrayList IterateOnce<T>(Func<T> function){
+    public static Dictionary<string, object?> IterateOnce<T>(Func<T> function){
         Stopwatch sw = new();
         sw.Start();
 
@@ -56,13 +56,12 @@ public abstract class CalendarCode{
 
         double timeElapsed = sw.Elapsed.TotalMilliseconds;
 
-        ArrayList arr =
-        [
-            value,
-            timeElapsed
-        ];
+        Dictionary<string, object?> NewDictionary = new(){
+            ["time"] = timeElapsed,
+            ["data"] = value
+        };
         
-        return arr;
+        return NewDictionary;
     }
 
     public string[] ReadAllLines(){
@@ -89,5 +88,39 @@ public abstract class CalendarCode{
             array.RemoveAt(0); // Remove the first element
             array.Add(DefaultValue); // Add the default value at the end
         }
+    }
+
+    public static void PrintLines(int times){
+        for(int x = 0; x < times; x++){
+            Console.WriteLine();
+        }
+    }
+
+    public static long LeastCommonMultiple(List<long> inputs){
+        return inputs.Aggregate((current, next) => LCM(current, next));
+    }
+
+    static long LCM(long a, long b){
+        return a * b / CalculateGCD(a, b);
+    }
+
+    static long GreatestCommonFactor(List<long> numbers){
+        long result = numbers[0];
+
+        for (int i = 1; i < numbers.Count; i++){
+            result = CalculateGCD(result, numbers[i]);
+        }
+
+        return result;
+    }
+
+    static long CalculateGCD(long a, long b){
+        while (b != 0)
+        {
+            long temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
     }
 }
