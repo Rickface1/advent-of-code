@@ -47,29 +47,24 @@ public class DayFive(string filePath) : main.CalendarCode(filePath){
 
             Console.WriteLine("Starting loop");
 
-            //Iterate for all of the ranges of the seeds
-            while(Seeds.Count > 0){
-                //Get all of the ranges required for each seed
-                List<(List<Range>,List<Range>)> Result = MapList.Select(map => map.Split(Seeds.Where(seed => seed != new Range(-1,-1)).ToList())).ToList();
-                Seeds.AddRange(Result.SelectMany(result => result.Item2));
-
-
-                List<Range> tempNewSeedList = Result.SelectMany(result => result.Item1).ToList();
-                if (tempNewSeedList.Count > 0) {
-                    TempSeedList.AddRange(tempNewSeedList);
-                }
-
-                Seeds.RemoveAt(0);
-            }
-
-
-            //Set Seeds for next iteration
-            Range Example = new(-1, -1);
-            Seeds = TempSeedList.Where(range => !range.Equals(Example)).ToList();
+            Seeds = Break(Seeds, MapList);
         }   
 
         //return the lowest seed
         return Seeds.Select(range => range.StartingValue).Min();
+    }
+
+    public static List<Range> Break(List<Range> SeedList, List<Map> MapList){
+        List<Range> TempSeedList = [];
+        MapList = [.. MapList.OrderBy(data => data.RootRange.StartingValue)];
+        SeedList = [.. SeedList.OrderBy(data => data.StartingValue)];
+
+        for(int x = 0; x < SeedList.Count; x++){
+            List<Range> ValidRanges = SeedList.SelectMany(data => data.Contained(MapList.Select(data => data.RootRange).ToList())).ToList();
+            //ValidRanges.AddRange(ValidRanges.Select(data => SeedList.Select(seed => seed.Contained(data))));
+        }
+
+        return [];
     }
 }
 
@@ -91,6 +86,22 @@ public class Range(long StartingValue, long Displacement){
         }
 
         return false;
+    }
+
+    public bool Contained(Range value){
+        return StartingValue <= value.StartingValue && value.EndingValue <= EndingValue;
+    }
+
+    public Range Overlaps(Range value){
+        return new Range(Math.Max(StartingValue, value.StartingValue), Math.Max(EndingValue, value.EndingValue) - Math.Max(StartingValue, value.StartingValue));
+    }
+
+    public List<Range> Contained(List<Range> value){
+        return value.Where(data => data.Contained(this)).Select(data => data.Overlaps(this)).ToList();
+    }
+
+    public List<Range> FillInValues(List<Range> ranges){
+        return [];
     }
 
     public override int GetHashCode(){
@@ -117,42 +128,6 @@ public class Map(Range RootRange, Range DestinationRange){
 
     public long Value(Range value){
         return value.StartingValue - RootRange.StartingValue + DestinationRange.StartingValue;
-    }
-
-    public (List<Range> Related, List<Range> Unrelated) Split(List<Range> range){
-        List<Range> Related = [];
-        List<Range> Unrelated = [];
-
-        Span<Range> SortedRange = [.. range.OrderBy(range => range.StartingValue)];
-
-        long StartingValue = RootRange.StartingValue;
-
-        for(int y = 0; y < range.Count; y++){
-            long intersectionStart = Math.Max(StartingValue, range[y].StartingValue);
-            long intersectionEnd = Math.Min(RootRange.EndingValue, range[y].EndingValue);
-
-            if(intersectionStart <= intersectionEnd){
-                if(range[y].StartingValue < StartingValue){
-                    Related.Add(new Range(RootRange.StartingValue, range[y].EndingValue - range[y].StartingValue));
-                }
-
-
-                Related.Add(new Range(Value(intersectionStart), intersectionEnd - intersectionStart));
-                //Console.WriteLine(new Range(Value(intersectionStart), intersectionEnd - intersectionStart));
-
-                StartingValue = intersectionEnd;
-            }
-        }
-
-        long IntersectionStart = Math.Max(StartingValue, range.Last().StartingValue);
-        long IntersectionEnd = Math.Min(RootRange.EndingValue, range.Last().EndingValue);
-
-        if(IntersectionStart <= IntersectionEnd){
-            if(range.Last().StartingValue < RootRange.EndingValue)
-                Unrelated.Add(new Range(range.Last().EndingValue, range.Last().EndingValue - range.Last().StartingValue));
-        }
-
-        return (Related, Unrelated);
     }
 
     public override string ToString(){

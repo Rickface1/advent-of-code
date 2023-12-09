@@ -5,8 +5,8 @@ namespace y2023;
 
 public class DayEight(string filePath) : main.CalendarCode(filePath){
     public override void Execute(string[] args){
-        //ExecutePartOne(args);
-        //PrintLines(3);
+        ExecutePartOne(args);
+        PrintLines(3);
 
         ExecutePartTwo(args);
         PrintLines(3);

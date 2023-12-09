@@ -2,24 +2,9 @@ using System.Collections;
 using System.Diagnostics;
 
 namespace main;
-/// <summary>
-/// Example Implementation of the CalendarCode class
-///
-/// Namespace of file must be y{insert year}, for example y2023
-/// Name of inheriting class must be Day{insert day}, for example DayOne
-/// Must implement method "Execute".
-/// 
-/// </summary>
-/// <param name="filePath"></param>
-public abstract class CalendarCode{
-    public string filePath;
-    public CalendarCode(string filePath){
-        this.filePath = "../../../" + DateTime.Now.ToString("yyyy") + "/" + filePath;
-    }
-    /// <summary>
-    /// Method that is ran when the main program is compiled.
-    /// returns void.
-    /// </summary>
+public abstract class CalendarCode(string filePath){
+    public string filePath = "../../../" + DateTime.Now.ToString("yyyy") + "/" + filePath;
+
     public abstract void Execute(string[] args);
     public static Dictionary<string, object?> IterateWithTime<T>(Func<T> function, int times, int warmups){
         for(int x = 0; x < warmups; x++){
@@ -100,11 +85,11 @@ public abstract class CalendarCode{
         return inputs.Aggregate((current, next) => LCM(current, next));
     }
 
-    static long LCM(long a, long b){
+    public static long LCM(long a, long b){
         return a * b / CalculateGCD(a, b);
     }
 
-    static long GreatestCommonFactor(List<long> numbers){
+    public static long GreatestCommonFactor(List<long> numbers){
         long result = numbers[0];
 
         for (int i = 1; i < numbers.Count; i++){
@@ -114,7 +99,7 @@ public abstract class CalendarCode{
         return result;
     }
 
-    static long CalculateGCD(long a, long b){
+    public static long CalculateGCD(long a, long b){
         while (b != 0)
         {
             long temp = b;
@@ -123,4 +108,44 @@ public abstract class CalendarCode{
         }
         return a;
     }
+
+    public static int CountIterations<T>(Func<T, bool> Condition, T Value, Func<T, T> ValueFunction){
+        int x = 0;
+
+        for(; Condition(Value); x++){
+            Value = ValueFunction(Value);
+        }
+
+        return x;
+    }
+
+    public static double PowerOf(int Root, int Power){
+        return Math.Pow(Root, Power);
+    }
+
+    public static int Multiply(int Value1, int Value2){
+        return Value1 * Value2;
+    }
+
+    public static double Multiply(List<int> Values){
+        return Values.Aggregate(Multiply);
+    }
+
+    public static int Divide(int Dividend, int Divisor){
+        return Dividend / Divisor;
+    }
+
+    public static int Divide(List<int> Dividends, List<int> Divisors){
+        return Divide(Dividends.Aggregate(Add), Divisors.Aggregate(Add));
+    }
+
+    public static int Add(int Value1, int Value2){
+        return Value1 + Value2;
+    }
+
+    public static double Root(int Value){
+        return Math.Sqrt(Value);
+    }
+
+    
 }
