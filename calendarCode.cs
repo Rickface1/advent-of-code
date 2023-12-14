@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Diagnostics;
+using System.Text;
 
-namespace main;
+namespace advent;
 public abstract class CalendarCode(string filePath){
     public string filePath = "../../../" + DateTime.Now.ToString("yyyy") + "/" + filePath;
 
@@ -143,9 +144,31 @@ public abstract class CalendarCode(string filePath){
         return Value1 + Value2;
     }
 
+    public static int Add(List<int> values){
+        return values.Aggregate(Add);
+    }
+
     public static double Root(int Value){
         return Math.Sqrt(Value);
     }
 
-    
+    public static string PrintTimes(int Times, string str){
+        StringBuilder sb = new();
+
+        for(int x = 0; x < Times; x++){
+            sb.Append(str);
+        }
+
+        return sb.ToString();
+    }
+
+    public static string PrintTimes(int Times, char c){
+        StringBuilder sb = new();
+
+        for(int x = 0; x < Times; x++){
+            sb.Append(c);
+        }
+
+        return sb.ToString();
+    }
 }

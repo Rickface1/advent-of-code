@@ -1,4 +1,6 @@
-﻿namespace y2023;
+﻿using advent;
+
+namespace advent.y2023;
 
 using System.Collections;
 using System.Diagnostics;
@@ -13,7 +15,7 @@ class ColorCombinations{
         this.quantity = quantity;
     }
 }
-public class DayTwo(string filePath) : main.CalendarCode(filePath){
+public class DayTwo(string filePath) : CalendarCode(filePath){
     public override void Execute(string[] args){
         Func<int> bob = () => MainProgram(args);
         var data = IterateWithTime<int>(bob,10000, 100);

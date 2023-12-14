@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
-using main;
+using advent;
+
+namespace advent;
 
 
 class MainRunner
@@ -38,7 +40,7 @@ class MainRunner
                             ExecuteSampleCode(LastInput);
                     else if(input[1] == "input")
                         ExecuteCode();
-                    else if(input[1].StartsWith('y'))
+                    else
                         ExecuteCode(input[1]);
                 }
             }
@@ -137,10 +139,10 @@ class MainRunner
     }
 
     private static string GenerateProgramCode(string namespacePrefix, string nextDayFolder){
-        return $@"
-namespace {namespacePrefix};
+        return 
+$@"namespace advent.{namespacePrefix};
 
-public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : main.CalendarCode(filePath){{
+public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : CalendarCode(filePath){{
     public override void Execute(string[] args){{
         args.ToList().ForEach(data => Console.WriteLine(data));
     }}
@@ -229,7 +231,7 @@ public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : mai
 
     public static void ExecuteCode(string data){
         // Assuming the class and method exist
-        var dynamicType = Type.GetType(data);
+        var dynamicType = Type.GetType("advent." + data);
 
         if (dynamicType != null){
             ExecuteMethod(dynamicType, data, "input");
@@ -298,7 +300,7 @@ public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : mai
     }
 
     private static void ExecuteMethod(Type dynamicType, string className, string input){
-        className = className.Substring(9);
+        className = className.Split('.')[^1][3 ..];
 
         var instance = Activator.CreateInstance(dynamicType, "Day" + WordsToNumber(className));
 

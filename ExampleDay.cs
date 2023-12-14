@@ -1,4 +1,6 @@
-namespace y2023;
+using advent;
+
+namespace advent.y2023;
 
 /// <summary>
 /// Example Implementation of the CalendarCode class
@@ -8,7 +10,7 @@ namespace y2023;
 /// Must implement method "Execute".
 /// </summary>
 /// <param name="filePath"></param>
-public class DayNumber(string filePath) : main.CalendarCode(filePath){
+public class DayNumber(string filePath) : CalendarCode(filePath){
     public override void Execute(string[] args){
         Console.WriteLine("Example Thing");
     }

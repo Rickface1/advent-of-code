@@ -1,4 +1,6 @@
-﻿namespace y2023;
+﻿using advent;
+
+namespace advent.y2023;
 
 using System.Collections;
 using System.Diagnostics;
@@ -35,7 +37,7 @@ class Pair{
         };
     }
 }
-public class DayOne(string filePath) : main.CalendarCode(filePath){
+public class DayOne(string filePath) : CalendarCode(filePath){
     private static List<Pair> pairs = [
         new Pair("1",1),
         new Pair("2",2),

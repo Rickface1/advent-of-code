@@ -1,10 +1,11 @@
 
 using System;
 using System.Data;
+using advent;
 
-namespace y2023;
+namespace advent.y2023;
 
-public class DaySeven(string filePath) : main.CalendarCode(filePath){
+public class DaySeven(string filePath) : CalendarCode(filePath){
     public override void Execute(string[] args){
         
 

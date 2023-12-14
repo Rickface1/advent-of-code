@@ -1,7 +1,8 @@
+using advent;
 
-namespace y2023;
+namespace advent.y2023;
 
-public class DayFive(string filePath) : main.CalendarCode(filePath){
+public class DayFive(string filePath) : CalendarCode(filePath){
     public override void Execute(string[] args){
         Console.WriteLine(Parse(args.AsSpan()));
     }

@@ -1,6 +1,8 @@
-namespace y2023;
+using advent;
 
-public class DayThree(string filePath) : main.CalendarCode(filePath){
+namespace advent.y2023;
+
+public class DayThree(string filePath) : CalendarCode(filePath){
     public override void Execute(string[] args){
         Func<(int total,int aggregate)> program = () => {
             return StartProgram(args);

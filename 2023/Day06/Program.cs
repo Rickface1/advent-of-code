@@ -1,7 +1,8 @@
+using advent;
 
-namespace y2023;
+namespace advent.y2023;
 
-public class DaySix(string filePath) : main.CalendarCode(filePath){
+public class DaySix(string filePath) : CalendarCode(filePath){
     public override void Execute(string[] args){
         List<string> input = args.Select(str => str[11..]).ToList();
         Func<(int, long)> ParseFunction = () => {

@@ -1,9 +1,10 @@
 
 using System.Diagnostics;
+using advent;
 
-namespace y2023;
+namespace advent.y2023;
 
-public class DayEight(string filePath) : main.CalendarCode(filePath){
+public class DayEight(string filePath) : CalendarCode(filePath){
     public override void Execute(string[] args){
         ExecutePartOne(args);
         PrintLines(3);
