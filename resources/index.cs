@@ -25,6 +25,10 @@ public class MapIndex(int line, int column){
         }
     }
 
+    public MapIndex Clone(){
+        return new MapIndex(line, column);
+    }
+
     public override String ToString(){
         return $"({line},{column})";
     }

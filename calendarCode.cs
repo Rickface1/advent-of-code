@@ -50,6 +50,27 @@ public abstract class CalendarCode(string filePath){
         return NewDictionary;
     }
 
+
+    public static void PrintOneIteration<T>(Func<T> function){
+        var Result = IterateOnce(function);
+
+        Console.WriteLine("--- TIME ---");
+        Console.WriteLine(Result["time"]);
+
+        Console.WriteLine("--- DATA ---");
+        Console.WriteLine(Result["data"]);
+    }
+
+    public static void PrintIterations<T>(Func<T> function, int times, int warmups){
+        var Result = IterateWithTime(function, times, warmups);
+
+        Console.WriteLine("--- TIME ---");
+        Console.WriteLine(Result["time"]);
+
+        Console.WriteLine("--- DATA ---");
+        Console.WriteLine(Result["data"]);
+    }
+
     public string[] ReadAllLines(){
         return File.ReadAllLines(filePath + "/" + "input.txt");
     }

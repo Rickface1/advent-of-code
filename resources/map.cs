@@ -11,6 +11,14 @@ public class CharMap{
         this.map = [.. map.Select(data => data.ToCharArray().ToList())];
     }
 
+    public int GetRowBounds(){
+        return map.Count;
+    }
+
+    public int GetColumnBounds(){
+        return map[0].Count;
+    }
+
     public char GetValue(MapIndex index){
         return map[index.line][index.column];
     }
