@@ -44,4 +44,8 @@ public class CharMap{
     public List<char> GetColumn(int index){
         return map.Select(data => data[index]).ToList();
     }
+
+    public CharMap Clone(){
+        return new CharMap(map.Select(data => new string(data.ToArray())).ToArray());
+    }
 }
