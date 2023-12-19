@@ -1,7 +1,7 @@
 
 namespace advent.resources;
 
-public class Shoelace{
+public class Area{
     public static long Inside(List<Vector> vectors){
         long sum = 0;
 
@@ -14,5 +14,5 @@ public class Shoelace{
         return Math.Abs(sum) / 2;
     }
 
-    public static long Area(List<Vector> vectors) => Inside(vectors) + (Vector.GetBorderLength(vectors)/2) + 1;
+    public static long TotalArea(List<Vector> vectors) => Inside(vectors) + (Vector.GetBorderLength(vectors)/2) + 1;
 }

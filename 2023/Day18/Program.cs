@@ -10,8 +10,8 @@ public class DayEighteen(string filePath) : CalendarCode(filePath){
     public static void PartOne(string[] args){
         List<Vector> Vectors = GetVectors(args);
         Console.WriteLine(Vector.GetBorderLength(Vectors));
-        long Area = Shoelace.Area(Vectors);
-        Console.WriteLine(Area);
+        Console.WriteLine(Area.Inside(Vectors));
+        Console.WriteLine(Area.TotalArea(Vectors));
     }
 
     public static int GetBorderLength(List<Vector> vectors) => vectors.Select(data => data.distance).Sum();
