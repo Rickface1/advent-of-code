@@ -1,9 +1,8 @@
 namespace advent.resources;
-public class Vector(MapIndex index, Direction direction, int distance, string color){
+public class Vector(MapIndex index, Direction direction, long distance){
     public MapIndex index = index;
     public Direction direction = direction;
-    public int distance = distance;
-    public string color = color;
+    public long distance = distance;
 
     public MapIndex GetNextPosition(){
         MapIndex Return = index.Clone();
@@ -26,5 +25,5 @@ public class Vector(MapIndex index, Direction direction, int distance, string co
         return Return;
     }
 
-    public static int GetBorderLength(List<Vector> vectors) => vectors.Select(data => data.distance).Sum();
+    public static long GetBorderLength(List<Vector> vectors) => vectors.Select(data => data.distance).Sum();
 }

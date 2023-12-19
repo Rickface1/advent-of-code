@@ -7,79 +7,25 @@ namespace advent.y2023;
 
 public class DayTen(string filePath) : CalendarCode(filePath){
     public override void Execute(string[] args){
-        //ExecutePartOne(args);
-
-        Console.WriteLine(ParsePartTwo(args));
+        ExecutePartOne(args);
+        PrintLines(2);
+        ExecutePartTwo(args);
+        PrintLines(2);
+        ExecuteBoth(args);
     }
 
-    public int ParsePartTwo(string[] args){
-        return ExpansionPartTwo(PrepPartTwo(args));
+    public static void ExecuteBoth(string[] args) => PrintIterations((long, long)() => ParseBoth(args), 10000, 500);
+
+    public static void ExecutePartOne(string[] args) => PrintIterations(int() => ParsePartOne(args), 10000, 500);
+
+    public static void ExecutePartTwo(string[] args) => PrintIterations(long() => Area.Inside(PrepPartTwo(args)), 10000, 500);
+
+    public static (long, long) ParseBoth(string[] args){
+        List<MapIndex> indices = PrepPartTwo(args);
+        long length = MapIndex.GetTotalLength(indices)/2L;
+        return (length, Area.Shoelace(indices) - length + 1);
     }
-
-    public int ExpansionPartTwo(string[] args){
-        return Add(FloodFill(args).Select(data => data.Count(InsideData => InsideData == '.')).ToList());
-    }
-
-    public List<List<char>> FloodFill(string[] args){
-        List<char[]> chars = args.Select(data => data.ToCharArray()).ToList();
-        List<(int, int)> Checked = [
-            (0, 0),
-        ];
-
-        Queue<(int, int)> Q = new();
-        Q.Enqueue((0, 0));
-
-        while(Q.Count > 0){
-            (int, int) n = Q.Dequeue();
-            char c = chars[n.Item1][n.Item2];
-
-            if(c == '.' || c == ' '){
-                chars[n.Item1][n.Item2] = ' ';
-
-                if(n.Item1 > 0){
-                    if(!Checked.Contains((n.Item1 - 1, n.Item2))){
-                        Q.Enqueue((n.Item1 - 1, n.Item2));
-                        Checked.Add((n.Item1 - 1, n.Item2));
-                    }
-                }
-
-                if(n.Item2 > 0){
-                    if(!Checked.Contains((n.Item1, n.Item2 - 1))){
-                        Q.Enqueue((n.Item1, n.Item2 - 1));
-                        Checked.Add((n.Item1, n.Item2 - 1));
-                    }
-                }
-
-                if(n.Item1 < chars.Count - 1){
-                    if(!Checked.Contains((n.Item1 + 1, n.Item2))){
-                        Q.Enqueue((n.Item1 + 1, n.Item2));
-                        Checked.Add((n.Item1 + 1, n.Item2));
-                    }
-                }
-
-                if(n.Item2 < chars[n.Item1].Length - 1){
-                    if(!Checked.Contains((n.Item1, n.Item2 + 1))){
-                        Q.Enqueue((n.Item1, n.Item2 + 1));
-                        Checked.Add((n.Item1, n.Item2 + 1));
-                    }
-                }
-            }
-        }
-
-        StringBuilder sb = new();
-        for(int line = 0; line < chars.Count; line++){
-            for(int character = 0; character < chars[line].Length; character++){
-                sb.Append(chars[line][character]);
-            }
-            sb.AppendLine();
-        }
-
-        WriteLines("data.txt", sb.ToString());
-
-        return chars.Select(data => data.ToList()).ToList();
-    }
-
-    public static string[] PrepPartTwo(string[] args){
+    public static List<MapIndex> PrepPartTwo(string[] args){
         List<List<char>> Map = args.Select(data => data.ToCharArray().ToList()).ToList();
         (int, int) StartingIndex = (-1, -1);
 
@@ -118,13 +64,15 @@ public class DayTen(string filePath) : CalendarCode(filePath){
         ];
         List<Direction> directions = [];
         Node CurrentNode = GetNode(CurrentSymbol);
-        Direction LastDirection = Direction.North;
 
         while(CurrentSymbol != 'S'){
             CurrentNode = GetNode(CurrentSymbol);
-            Indexes.Add(CurrentIndex);
 
             CurrentDirection = CurrentNode.NextPlace(CurrentDirection);
+
+            if(CurrentSymbol == 'L' || CurrentSymbol == '7' || CurrentSymbol == 'F' || CurrentSymbol == 'J'){
+                Indexes.Add(CurrentIndex);
+            }
 
             if(CurrentDirection == Direction.North){
                 CurrentIndex = (CurrentIndex.Item1 - 1, CurrentIndex.Item2);
@@ -139,54 +87,11 @@ public class DayTen(string filePath) : CalendarCode(filePath){
             directions.Add(CurrentDirection);
 
             CurrentSymbol = Map[CurrentIndex.Item1][CurrentIndex.Item2];
-            LastDirection = CurrentDirection;
         }
 
         Map[StartingIndex.Item1][StartingIndex.Item2] = GetSymbol(directions[0], Node.Opposite(directions[^1]));
 
-        Console.WriteLine(Map[StartingIndex.Item1][StartingIndex.Item2]);
-
-        StringBuilder sb = new();
-        List<string> Return = [
-            PrintTimes(args[0].Length + 2, ' ')
-        ];
-
-        for(int line = 0; line < Map.Count; line++){
-            sb.Append(' ');
-            for(int character = 0; character < Map[line].Count; character++){
-                if(!Indexes.Contains((line, character))){
-                    sb.Append('.');
-                }else{
-                    sb.Append(Map[line][character]);
-                }
-            }
-            sb.Append(' ');
-            Return.Add(sb.ToString());
-            sb.Clear();
-        }
-
-        Return.Add(PrintTimes(args[^1].Length + 2, ' '));
-
-        Return.ForEach(Console.WriteLine);
-
-        return [.. Return];
-    }
-
-    public static void ExecutePartOne(string[] args){
-        Func<int> ParseFunction = () => {
-            return ParsePartOne(args);
-        };
-
-        //var Result = IterateWithTime(ParseFunction,1000,10);
-        var Result = IterateOnce(ParseFunction);
-
-        Console.WriteLine("--- TIME ---");
-        Console.WriteLine(Result["time"]);
-
-        Console.WriteLine();
-
-        Console.WriteLine("--- DATA ---");
-        Console.WriteLine(Result["data"]);
+        return Indexes.Select(data => new MapIndex(data)).ToList();
     }
 
     public static int ParsePartOne(string[] args){

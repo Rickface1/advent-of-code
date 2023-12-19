@@ -20,18 +20,24 @@ public class CharMap{
     }
 
     public char GetValue(MapIndex index){
-        return map[index.line][index.column];
+        int line = (int)index.line;
+        int column = (int)index.column;
+        return map[line][column];
     }
 
     public char GetNextValue(MapIndex index, Direction direction){
+        int line = (int)index.line;
+        int column = (int)index.column;
+
+
         if(direction == Direction.North){
-            return map[index.line - 1][index.column];
+            return map[line - 1][column];
         }else if(direction == Direction.South){
-            return map[index.line + 1][index.column];
+            return map[line + 1][column];
         }else if(direction == Direction.East){
-            return map[index.line][index.column + 1];
+            return map[line][column + 1];
         }else if(direction == Direction.West){
-            return map[index.line][index.column - 1];
+            return map[line][column - 1];
         }
 
         throw new Exception($"DIRECTION OUT OF BOUNDS: {direction}");

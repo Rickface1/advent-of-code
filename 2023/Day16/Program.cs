@@ -153,7 +153,9 @@ public class BeamMap : CharMap{
     }
 
     public char GetCurrentValue(MapIndex index){
-        return map[index.line][index.column];
+        int line = (int)index.line;
+        int column = (int)index.column;
+        return map[line][column];
     }
 }
 

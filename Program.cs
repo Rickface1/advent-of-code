@@ -40,6 +40,8 @@ class MainRunner
                             ExecuteSampleCode(LastInput);
                     else if(input[1] == "input")
                         ExecuteCode();
+                    else if(input.Count > 2)
+                        ExecuteCode(input[1], input[2]);
                     else
                         ExecuteCode(input[1]);
                 }
@@ -242,7 +244,7 @@ public class Day{NumberToWords(int.Parse(nextDayFolder))}(string filePath) : Cal
 
     public static void ExecuteCode(string data, string input){
         // Assuming the class and method exist
-        var dynamicType = Type.GetType(data);
+        var dynamicType = Type.GetType("advent." + data);
 
         if (dynamicType != null){
             ExecuteMethod(dynamicType, data, input);
